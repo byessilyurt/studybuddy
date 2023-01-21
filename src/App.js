@@ -1,7 +1,15 @@
+import { Route, Routes } from "react-router-dom";
+
+import Auth from "./components/Auth";
+import Home from "./components/Home";
+
 function App() {
   return (
     <div className="App">
-      <h2 className="text-red-300">Hello world</h2>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/auth" element={<Auth />} />
+      </Routes>
     </div>
   );
 }
