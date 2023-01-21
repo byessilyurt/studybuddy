@@ -1,5 +1,6 @@
 import Onboarding from "../images/onboarding.png";
 import { FcGoogle } from "react-icons/fc";
+import { signInWithGoogle, signUpWithGoogle } from "../firebase";
 
 function Auth() {
   return (
@@ -14,11 +15,17 @@ function Auth() {
           alt="Auth page"
         />
         <div className="flex flex-col items-center mt-10 sm:w-3/4 md:w-1/2 lg:w-1/3">
-          <button className="w-40 flex justify-between items-center flex-1 text-md md:text-xl bg-white hover:bg-gray-300 text-black font-medium py-2 px-6 rounded-lg m-2 ">
+          <button
+            className="w-40 flex justify-between items-center flex-1 text-md md:text-xl bg-white hover:bg-gray-300 text-black font-medium py-2 px-6 rounded-lg m-2"
+            onClick={signUpWithGoogle}
+          >
             <p>Sign up</p>
             <FcGoogle />
           </button>
-          <button className="w-40 flex justify-between items-center flex-1 text-md md:text-xl bg-white hover:bg-gray-300 text-black font-medium py-2 px-6 rounded-lg m-2">
+          <button
+            className="w-40 flex justify-between items-center flex-1 text-md md:text-xl bg-white hover:bg-gray-300 text-black font-medium py-2 px-6 rounded-lg m-2"
+            onClick={signInWithGoogle}
+          >
             <p>Log in</p>
             <FcGoogle />
           </button>
