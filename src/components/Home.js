@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+import SideDrawer from "./SideDrawer";
 function Home() {
   const navigate = useNavigate();
 
@@ -23,7 +24,8 @@ function Home() {
 
   return (
     <div>
-      <h1>Home</h1>
+      <SideDrawer />
+      <h1>Welcome to App</h1>
       <button onClick={handlelogout}>Log out</button>
     </div>
   );
