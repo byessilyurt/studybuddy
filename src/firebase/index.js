@@ -32,6 +32,7 @@ const signInWithGoogle = async () => {
   try {
     const res = await signInWithPopup(auth, googleProvider);
     const user = res.user;
+    sessionStorage.setItem("Auth Token", res._tokenResponse.refreshToken);
     const q = query(collection(db, "users"), where("uid", "==", user.uid));
     const docs = await getDocs(q);
     if (docs.docs.length === 0) {
@@ -64,4 +65,4 @@ const logout = () => {
   signOut(auth);
 };
 
-export { signInWithGoogle, signUpWithGoogle, logout };
+export { signInWithGoogle, logout };
