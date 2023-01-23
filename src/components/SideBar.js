@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { IoIosClose, IoIosMenu, IoIosLogOut } from "react-icons/io";
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const handlelogout = () => {
+    sessionStorage.removeItem("Auth Token");
+    navigate("/auth");
+  };
 
   return (
     <>
@@ -51,7 +57,7 @@ const SideBar = () => {
             Profile
           </a>
           <a
-            href="#"
+            onClick={handlelogout}
             className="block fixed  w-auto text-2xl bottom-4 p-2 text-red-500 hover:bg-red-100"
           >
             <IoIosLogOut />
