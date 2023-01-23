@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import SideDrawer from "./SideDrawer";
+import SideBar from "./SideBar";
 import MatchButton from "./MatchButton";
 import StudyBuddyCard from "./StudyBuddyCard";
 
@@ -27,7 +27,7 @@ function Home() {
 
   return (
     <div>
-      <SideDrawer />
+      <SideBar />
       <StudyBuddyCard />
       <MatchButton />
     </div>
