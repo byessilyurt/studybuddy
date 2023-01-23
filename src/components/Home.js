@@ -2,6 +2,9 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import SideDrawer from "./SideDrawer";
+import MatchButton from "./MatchButton";
+import StudyBuddyCard from "./StudyBuddyCard";
+
 function Home() {
   const navigate = useNavigate();
 
@@ -25,8 +28,8 @@ function Home() {
   return (
     <div>
       <SideDrawer />
-      <h1>Welcome to App</h1>
-      <button onClick={handlelogout}>Log out</button>
+      <StudyBuddyCard />
+      <MatchButton />
     </div>
   );
 }
