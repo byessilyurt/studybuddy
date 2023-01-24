@@ -20,11 +20,6 @@ function Home() {
     }
   }, []);
 
-  const handlelogout = () => {
-    sessionStorage.removeItem("Auth Token");
-    navigate("/auth");
-  };
-
   return (
     <div>
       <SideBar />
