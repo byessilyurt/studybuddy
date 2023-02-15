@@ -8,7 +8,7 @@ import Matched from "./Matched";
 
 function Home() {
   const navigate = useNavigate();
-  const [matched, setMatched] = useState(true);
+  const [matched, setMatched] = useState(false);
 
   useEffect(() => {
     let authToken = sessionStorage.getItem("Auth Token");

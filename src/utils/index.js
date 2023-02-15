@@ -6,6 +6,8 @@ const getUserIdAndEmail = () => {
   return { userId: user.uid, email: user.email };
 };
 
+// look for other users whose status also matching and match them
+
 const handleMatchButtonClick = async () => {
   // Get the user's ID and current timestamp
   const userInfo = getUserIdAndEmail();
