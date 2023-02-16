@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 
 import { motion } from "framer-motion";
-import { handleMatchButtonClick } from "../utils";
+import { addToMatchingUsers, removeFromMatchingUsers } from "../firebase";
 const MatchButton = () => {
   const [matching, setMatching] = useState(false);
   const handleMatchClick = () => {
     setMatching(true);
-    //handleMatchButtonClick();
+    addToMatchingUsers();
   };
   const handleCancelClick = () => {
     setMatching(false);
+    removeFromMatchingUsers();
   };
 
   return (
@@ -49,11 +50,11 @@ const MatchButton = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute -bottom-10 left-1/3"
+            className="absolute -bottom-10 w-64 "
           >
             <i className="fas fa-times fa-2x"></i>
             <p className="text-black text-md font-medium animate-pulse">
-              Loading...
+              Looking for a studybuddy...
             </p>
           </motion.div>
         ) : null}
