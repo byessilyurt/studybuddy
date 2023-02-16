@@ -58,7 +58,7 @@ const SideBar = () => {
           </a>
           <a
             onClick={handlelogout}
-            className="block fixed  w-auto text-2xl bottom-4 p-2 text-red-500 hover:bg-red-100"
+            className="block fixed cursor-pointer w-auto text-2xl bottom-4 p-2 text-red-500 hover:bg-red-100"
           >
             <IoIosLogOut />
           </a>
