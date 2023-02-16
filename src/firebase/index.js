@@ -4,10 +4,12 @@ import { getAnalytics } from "firebase/analytics";
 import {
   getFirestore,
   query,
+  doc,
   getDocs,
   collection,
   where,
   addDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -49,20 +51,50 @@ const signInWithGoogle = async () => {
   }
 };
 
-// sign up with Google
-// const signUpWithGoogle = async () => {
-//   const provider = new app.auth.GoogleAuthProvider();
-//   try {
-//     const { user } = await app.auth().signInWithPopup(provider);
-//     const { email, displayName } = user;
-//     await app.auth().createUserWithEmailAndPassword(email, displayName);
-//     console.log("User signed up with Google successfully!");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 const logout = () => {
   signOut(auth);
 };
 
-export { signInWithGoogle, logout, auth, app, db };
+const getUserIdAndEmail = () => {
+  const user = auth.currentUser;
+  return { userId: user.uid, email: user.email };
+};
+
+const addToMatchingUsers = async () => {
+  const userInfo = getUserIdAndEmail();
+  const timestamp = Date.now();
+  await addDoc(collection(db, "matching_users"), {
+    userID: userInfo.userId,
+    email: userInfo.email,
+    status: "matching",
+    timestamp: timestamp,
+  });
+  console.log(userInfo.email, "has been added to the database");
+};
+
+const removeFromMatchingUsers = async () => {
+  const userInfo = getUserIdAndEmail();
+  const q = query(
+    collection(db, "matching_users"),
+    where("userID", "==", userInfo.userId)
+  );
+  const docs = await getDocs(q);
+  console.log(docs.docs[0].id);
+  await deleteDoc(doc(db, "matching_users", docs.docs[0].id))
+    .then(() => {
+      console.log("Document successfully deleted!");
+    })
+    .catch((error) => {
+      console.error("Error removing document: ", error);
+    });
+};
+
+export {
+  signInWithGoogle,
+  logout,
+  auth,
+  app,
+  db,
+  addToMatchingUsers,
+  removeFromMatchingUsers,
+};
