@@ -3,7 +3,7 @@
 # dependencies
 /node_modules
 /.pnp
-/dist
+/dist/output.css
 .pnp.js
 
 # testing
