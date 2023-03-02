@@ -12,12 +12,9 @@ function Home() {
 
   useEffect(() => {
     let authToken = sessionStorage.getItem("Auth Token");
-
     if (authToken) {
       navigate("/");
-    }
-
-    if (!authToken) {
+    } else {
       navigate("/auth");
     }
   }, []);

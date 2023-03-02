@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 
 function Auth() {
   const navigate = useNavigate();
-
   const handleSignInWithGoogle = async () => {
     try {
       await signInWithGoogle();
@@ -15,7 +14,6 @@ function Auth() {
       console.error(error);
     }
   };
-
   return (
     <div className="bg-gray-200">
       <div className="flex items-center p-4 border-2 border-solid">
@@ -41,11 +39,10 @@ function Auth() {
           href="https://github.com/byessilyurt"
           target="_blank"
         >
-          Copyright @2022
+          Copyright @2023
         </a>
       </div>
     </div>
   );
 }
-
 export default Auth;

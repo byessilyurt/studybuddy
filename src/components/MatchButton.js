@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import { motion } from "framer-motion";
 import { addToMatchingUsers, removeFromMatchingUsers } from "../firebase";
+
 const MatchButton = () => {
   const [matching, setMatching] = useState(false);
   const handleMatchClick = () => {
@@ -12,7 +13,6 @@ const MatchButton = () => {
     setMatching(false);
     removeFromMatchingUsers();
   };
-
   return (
     <div className="md:pl-64 flex justify-center items-start pt-8 h-screen">
       <div className="relative">
@@ -62,5 +62,4 @@ const MatchButton = () => {
     </div>
   );
 };
-
 export default MatchButton;

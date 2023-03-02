@@ -4,19 +4,16 @@ import { useEffect } from "react";
 import Auth from "./components/Auth";
 import Home from "./components/Home";
 
-function App() {
+const App = () => {
   const navigate = useNavigate();
-
   useEffect(() => {
     let authToken = sessionStorage.getItem("Auth Token");
-
     if (authToken) {
       navigate("/");
     } else {
       navigate("/auth");
     }
   }, []);
-
   return (
     <div className="App">
       <Routes>
@@ -25,6 +22,5 @@ function App() {
       </Routes>
     </div>
   );
-}
-
+};
 export default App;

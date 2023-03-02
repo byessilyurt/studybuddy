@@ -3,15 +3,12 @@ import { motion } from "framer-motion";
 
 const Matched = ({ matchData }) => {
   const [time, setTime] = useState(0);
-
   useEffect(() => {
     const interval = setInterval(() => {
       setTime((prevTime) => prevTime + 1);
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -38,5 +35,4 @@ const Matched = ({ matchData }) => {
     </motion.div>
   );
 };
-
 export default Matched;

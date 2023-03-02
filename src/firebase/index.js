@@ -27,8 +27,8 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
-// login with Google
 const googleProvider = new GoogleAuthProvider();
+
 const signInWithGoogle = async () => {
   try {
     const res = await signInWithPopup(auth, googleProvider);
@@ -50,7 +50,6 @@ const signInWithGoogle = async () => {
   }
 };
 
-// if user logs out, remove them from the matching_users collection
 const logout = async () => {
   try {
     await removeFromMatchingUsers();

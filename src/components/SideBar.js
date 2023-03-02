@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { IoIosClose, IoIosMenu, IoIosLogOut } from "react-icons/io";
 import { logout } from "../firebase";
+
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
@@ -10,7 +11,6 @@ const SideBar = () => {
     await logout();
     navigate("/auth");
   };
-
   return (
     <>
       <button
@@ -31,7 +31,6 @@ const SideBar = () => {
           }`}
         ></div>
       </div>
-
       <div
         className={`z-40 absolute inset-y-0 left-0 w-64 transition-all duration-300 transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
@@ -67,5 +66,4 @@ const SideBar = () => {
     </>
   );
 };
-
 export default SideBar;

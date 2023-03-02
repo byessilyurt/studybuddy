@@ -21,5 +21,4 @@ const StudyBuddyCard = () => {
     </div>
   );
 };
-
 export default StudyBuddyCard;
