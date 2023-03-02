@@ -27,7 +27,6 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
 // login with Google
 const googleProvider = new GoogleAuthProvider();
 const signInWithGoogle = async () => {
@@ -51,8 +50,15 @@ const signInWithGoogle = async () => {
   }
 };
 
-const logout = () => {
-  signOut(auth);
+// if user logs out, remove them from the matching_users collection
+const logout = async () => {
+  try {
+    await removeFromMatchingUsers();
+    sessionStorage.removeItem("Auth Token");
+    signOut(auth);
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 const getUserIdAndEmail = () => {
@@ -69,7 +75,6 @@ const addToMatchingUsers = async () => {
     status: "matching",
     timestamp: timestamp,
   });
-  console.log(userInfo.email, "has been added to the database");
 };
 
 const removeFromMatchingUsers = async () => {
@@ -79,14 +84,7 @@ const removeFromMatchingUsers = async () => {
     where("userID", "==", userInfo.userId)
   );
   const docs = await getDocs(q);
-  console.log(docs.docs[0].id);
-  await deleteDoc(doc(db, "matching_users", docs.docs[0].id))
-    .then(() => {
-      console.log("Document successfully deleted!");
-    })
-    .catch((error) => {
-      console.error("Error removing document: ", error);
-    });
+  await deleteDoc(doc(db, "matching_users", docs.docs[0].id));
 };
 
 export {
