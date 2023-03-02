@@ -12,7 +12,7 @@ function Auth() {
       await signInWithGoogle();
       navigate("/");
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

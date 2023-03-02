@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { IoIosClose, IoIosMenu, IoIosLogOut } from "react-icons/io";
-
+import { logout } from "../firebase";
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const handlelogout = () => {
-    sessionStorage.removeItem("Auth Token");
+  const handlelogout = async () => {
+    await logout();
     navigate("/auth");
   };
 
