@@ -18,13 +18,11 @@ const handleMatchButtonClick = async () => {
     status: "matching",
     timestamp: timestamp,
   });
-  console.log(userInfo.email, "has been added to the database");
 };
 
 const handleCancelClick = async () => {
   const userInfo = getUserIdAndEmail();
   await deleteDoc(collection(db, "matching_users"), userInfo.userId);
-  console.log(userInfo.email, "has been deleted from the database");
 };
 
 export { handleMatchButtonClick, handleCancelClick };
