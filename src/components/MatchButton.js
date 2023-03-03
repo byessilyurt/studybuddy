@@ -1,10 +1,20 @@
-import React, { useState } from "react";
-
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+
 import { addToMatchingUsers, removeFromMatchingUsers } from "../firebase";
+import { usePageVisibility } from "../hooks";
 
 const MatchButton = () => {
   const [matching, setMatching] = useState(false);
+  const isVisible = usePageVisibility();
+
+  useEffect(() => {
+    if (!isVisible) {
+      setMatching(false);
+      removeFromMatchingUsers();
+    }
+  }, [isVisible]);
+
   const handleMatchClick = () => {
     setMatching(true);
     addToMatchingUsers();
