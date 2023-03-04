@@ -14,13 +14,13 @@ import {
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBZwDfFnH_cxca88WaQ_on7mnqNv4BaaZE",
-  authDomain: "studybuddy-7fd62.firebaseapp.com",
-  projectId: "studybuddy-7fd62",
-  storageBucket: "studybuddy-7fd62.appspot.com",
-  messagingSenderId: "800200913730",
-  appId: "1:800200913730:web:6b5e7b31101e7520350edb",
-  measurementId: "G-Y85Q23LPZX",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
@@ -71,9 +71,29 @@ const addToMatchingUsers = async () => {
   await addDoc(collection(db, "matching_users"), {
     userID: userInfo.userId,
     email: userInfo.email,
-    status: "matching",
     timestamp: timestamp,
   });
+  await new Promise((r) => setTimeout(r, 1000));
+  await matchUsers();
+};
+
+const matchUsers = async () => {
+  const q = query(collection(db, "matching_users"));
+  const docs = await getDocs(q);
+  if (docs.docs.length === 2) {
+    const doc1 = docs.docs[0];
+    const doc2 = docs.docs[1];
+    const user1 = doc1.data();
+    const user2 = doc2.data();
+    await addDoc(collection(db, "matches"), {
+      user1: user1,
+      user2: user2,
+    });
+    await deleteDoc(doc(db, "matching_users", doc1.id));
+    await deleteDoc(doc(db, "matching_users", doc2.id));
+  }
+  // add user1 and user2 to global state
+  // set matched to true
 };
 
 const removeFromMatchingUsers = async () => {
