@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { MatchContext } from "../context";
 
 import SideBar from "./SideBar";
 import MatchButton from "./MatchButton";
@@ -8,7 +9,7 @@ import Matched from "./Matched";
 
 function Home() {
   const navigate = useNavigate();
-  const [matched, setMatched] = useState(false);
+  const { matched } = useContext(MatchContext);
 
   useEffect(() => {
     let authToken = sessionStorage.getItem("Auth Token");
