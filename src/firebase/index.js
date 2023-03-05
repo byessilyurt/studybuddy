@@ -10,6 +10,7 @@ import {
   where,
   addDoc,
   deleteDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -33,7 +34,7 @@ const signInWithGoogle = async () => {
   try {
     const res = await signInWithPopup(auth, googleProvider);
     const user = res.user;
-    sessionStorage.setItem("Auth Token", res._tokenResponse.refreshToken);
+    localStorage.setItem("User", JSON.stringify(user));
     const q = query(collection(db, "users"), where("uid", "==", user.uid));
     const docs = await getDocs(q);
     if (docs.docs.length === 0) {
@@ -73,27 +74,43 @@ const addToMatchingUsers = async () => {
     email: userInfo.email,
     timestamp: timestamp,
   });
-  await new Promise((r) => setTimeout(r, 1000));
-  await matchUsers();
+  // check if there is another user in the collection
+  // if not, mark this user as not_going_to_create_room
+  // if yes, mark this user as going_to_create_room
 };
 
 const matchUsers = async () => {
-  const q = query(collection(db, "matching_users"));
-  const docs = await getDocs(q);
-  if (docs.docs.length === 2) {
-    const doc1 = docs.docs[0];
-    const doc2 = docs.docs[1];
-    const user1 = doc1.data();
-    const user2 = doc2.data();
-    await addDoc(collection(db, "matches"), {
-      user1: user1,
-      user2: user2,
-    });
-    await deleteDoc(doc(db, "matching_users", doc1.id));
-    await deleteDoc(doc(db, "matching_users", doc2.id));
-  }
-  // add user1 and user2 to global state
-  // set matched to true
+  const unsubscribe = onSnapshot(
+    collection(db, "matching_users"),
+    (querySnapshot) => {
+      if (querySnapshot.size === 2) {
+        const doc1 = querySnapshot.docs[0];
+        const doc2 = querySnapshot.docs[1];
+        const user1 = doc1.data();
+        const user2 = doc2.data();
+        let matchedUser;
+        if (auth.currentUser.uid === user1.userID) {
+          matchedUser = user2;
+        } else {
+          matchedUser = user1;
+        }
+        addDoc(collection(db, "matches"), {
+          matchedUser: matchedUser,
+        })
+          .then(() => {
+            deleteDoc(doc(db, "matching_users", doc1.id));
+            deleteDoc(doc(db, "matching_users", doc2.id));
+            unsubscribe();
+            return matchedUser;
+          })
+          .catch((error) => {
+            console.error("Error adding matched user to database: ", error);
+          });
+      } else {
+        console.log("Waiting for users to match...");
+      }
+    }
+  );
 };
 
 const removeFromMatchingUsers = async () => {
@@ -114,4 +131,5 @@ export {
   db,
   addToMatchingUsers,
   removeFromMatchingUsers,
+  matchUsers,
 };

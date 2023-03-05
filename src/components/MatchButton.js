@@ -1,27 +1,45 @@
-import { useState, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { motion } from "framer-motion";
 
-import { addToMatchingUsers, removeFromMatchingUsers } from "../firebase";
 import { usePageVisibility } from "../hooks";
-
+import { handleMatchButtonClick, handleCancelButtonClick } from "../utils";
+import { MatchContext } from "../context";
+import { matchUsers } from "../firebase";
 const MatchButton = () => {
-  const [matching, setMatching] = useState(false);
   const isVisible = usePageVisibility();
+  const { setIsMatched, setMatchedUser, matching, setMatching } =
+    useContext(MatchContext);
 
   useEffect(() => {
     if (!isVisible) {
-      setMatching(false);
-      removeFromMatchingUsers();
+      handleCancelButtonClick()
+        .then(() => {
+          setMatching(false);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }, [isVisible]);
 
-  const handleMatchClick = () => {
+  const handleMatchClick = async () => {
     setMatching(true);
-    addToMatchingUsers();
+    // async needed?
+    const added = handleMatchButtonClick();
+    if (added) {
+      try {
+        const matchedUser = await matchUsers();
+        console.log(matchedUser);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      // error
+    }
   };
   const handleCancelClick = () => {
+    handleCancelButtonClick();
     setMatching(false);
-    removeFromMatchingUsers();
   };
   return (
     <div className="md:pl-64 flex justify-center items-start pt-8 h-screen">

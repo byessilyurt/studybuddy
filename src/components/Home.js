@@ -9,21 +9,12 @@ import Matched from "./Matched";
 
 function Home() {
   const navigate = useNavigate();
-  const { matched } = useContext(MatchContext);
-
-  useEffect(() => {
-    let authToken = sessionStorage.getItem("Auth Token");
-    if (authToken) {
-      navigate("/");
-    } else {
-      navigate("/auth");
-    }
-  }, []);
+  const { isMatched } = useContext(MatchContext);
 
   return (
     <div>
       <SideBar />
-      {matched ? (
+      {isMatched ? (
         <Matched matchData={{ username: "Burak" }} />
       ) : (
         <>

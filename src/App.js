@@ -7,13 +7,14 @@ import Home from "./components/Home";
 const App = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    let authToken = sessionStorage.getItem("Auth Token");
-    if (authToken) {
+    let userStorage = localStorage.getItem("User");
+    if (userStorage) {
       navigate("/");
     } else {
+      console.log("fired auth");
       navigate("/auth");
     }
-  }, []);
+  }, [localStorage.getItem("User")]);
   return (
     <div className="App">
       <Routes>
