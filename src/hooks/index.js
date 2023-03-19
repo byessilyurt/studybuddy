@@ -18,4 +18,30 @@ const usePageVisibility = () => {
   return isVisible;
 };
 
-export { usePageVisibility };
+const useEndMatch = (matchId, endMatch, removeMatchedUser) => {
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (document.hidden) {
+        await endMatch(matchId);
+        removeMatchedUser();
+      }
+    };
+
+    const handleEndMatch = async (e) => {
+      e.preventDefault();
+      await endMatch(matchId);
+      removeMatchedUser();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    window.addEventListener("beforeunload", handleEndMatch);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("beforeunload", handleEndMatch);
+    };
+  }, [matchId, endMatch, removeMatchedUser]);
+};
+
+export { usePageVisibility, useEndMatch };

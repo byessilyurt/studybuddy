@@ -119,7 +119,7 @@ const matchUsers = async () => {
             const matchedUser = user1.userID === currentUserId ? user2 : user1;
 
             unsubscribe();
-            resolve(matchedUser);
+            resolve({ matchId, matchedUser });
           } catch (error) {
             console.error("Error adding matched users to database: ", error);
             reject(error);
@@ -130,6 +130,15 @@ const matchUsers = async () => {
       }
     );
   });
+};
+
+const endMatch = async (matchId) => {
+  try {
+    await deleteDoc(doc(db, "matches", matchId));
+    console.log("Match ended successfully");
+  } catch (error) {
+    console.error("Error ending match: ", error);
+  }
 };
 
 const removeFromMatchingUsers = async () => {
@@ -151,4 +160,5 @@ export {
   addToMatchingUsers,
   removeFromMatchingUsers,
   matchUsers,
+  endMatch,
 };

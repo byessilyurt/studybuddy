@@ -7,7 +7,7 @@ import { MatchContext } from "../context";
 import { matchUsers } from "../firebase";
 const MatchButton = () => {
   const isVisible = usePageVisibility();
-  const { setIsMatched, setMatchedUser, matching, setMatching } =
+  const { setIsMatched, setMatchedUser, setMatchId, matching, setMatching } =
     useContext(MatchContext);
 
   useEffect(() => {
@@ -23,13 +23,18 @@ const MatchButton = () => {
   }, [isVisible]);
 
   const handleMatchClick = async () => {
+    // empty all matched users
+    setMatchedUser(null);
+    setMatchId(null);
+    setIsMatched(false);
     setMatching(true);
     const added = await handleMatchButtonClick();
     if (added) {
       try {
-        const matchedUser = await matchUsers();
+        const { matchedUser, matchId } = await matchUsers();
         setIsMatched(true);
         setMatchedUser(matchedUser);
+        setMatchId(matchId);
       } catch (error) {
         console.log(error);
       }
