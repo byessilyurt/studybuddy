@@ -65,4 +65,31 @@ const useMatchChangeListener = (matchId, removeMatchedUser) => {
   }, [matchId, removeMatchedUser]);
 };
 
-export { usePageVisibility, useEndMatch, useMatchChangeListener };
+const useTimer = (setTime) => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime((prevTime) => prevTime + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+};
+
+const useHandleLogout = (handleEndMatch) => {
+  useEffect(() => {
+    const handleUserLoggedOut = () => {
+      handleEndMatch();
+    };
+    window.addEventListener("userLoggedOut", handleUserLoggedOut);
+    return () => {
+      window.removeEventListener("userLoggedOut", handleUserLoggedOut);
+    };
+  }, []);
+};
+
+export {
+  usePageVisibility,
+  useEndMatch,
+  useMatchChangeListener,
+  useTimer,
+  useHandleLogout,
+};
