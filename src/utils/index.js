@@ -38,10 +38,23 @@ const getIsDocumentHidden = () => {
   return !document[getBrowserDocumentHiddenProp()];
 };
 
+const formatTime = (time) => {
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time % 3600) / 60);
+  const seconds = time % 60;
+
+  return (
+    (hours ? `${hours}:` : "") +
+    (minutes ? `${String(minutes).padStart(2, "0")}:` : "00:") +
+    String(seconds).padStart(2, "0")
+  );
+};
+
 export {
   handleMatchButtonClick,
   handleCancelButtonClick,
   getIsDocumentHidden,
   getBrowserVisibilityProp,
   getBrowserDocumentHiddenProp,
+  formatTime,
 };
