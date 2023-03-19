@@ -3,36 +3,51 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 import { MatchContext } from "../context";
-import { useEndMatch } from "../hooks";
+import {
+  useAuthChangeListener,
+  useEndMatch,
+  useMatchChangeListener,
+} from "../hooks";
 import { endMatch } from "../firebase";
 
 const Matched = () => {
   const navigate = useNavigate();
-  const { matchedUser, matchId, removeMatchedUser } = useContext(MatchContext);
+  const { matchedUser, matchId, removeMatchedUserWithCallback } =
+    useContext(MatchContext);
   const [time, setTime] = useState(0);
 
   useEffect(() => {
-    if (!matchedUser) {
-      navigate("/");
-    } else {
-      const interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [matchedUser, navigate]);
+    const interval = setInterval(() => {
+      setTime((prevTime) => prevTime + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
-  useEndMatch(matchId, endMatch, removeMatchedUser);
+  useEffect(() => {
+    const handleUserLoggedOut = () => {
+      // User is logged out, end the match and navigate back to the home page
+      handleEndMatch();
+    };
+
+    window.addEventListener("userLoggedOut", handleUserLoggedOut);
+
+    return () => {
+      window.removeEventListener("userLoggedOut", handleUserLoggedOut);
+    };
+  }, []);
+
+  useEndMatch(matchId, endMatch, removeMatchedUserWithCallback);
+  useMatchChangeListener(matchId, removeMatchedUserWithCallback);
+
   const handleEndMatch = async () => {
     await endMatch(matchId);
-    removeMatchedUser();
+    removeMatchedUserWithCallback(() => navigate("/"));
   };
 
   // If matchedUser is null, do not render the component
   if (!matchedUser) {
     return null;
   }
-
   return (
     <motion.div
       initial={{ opacity: 0 }}

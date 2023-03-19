@@ -1,4 +1,5 @@
 import { createContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const MatchContext = createContext();
 const MatchProvider = ({ children }) => {
@@ -7,11 +8,15 @@ const MatchProvider = ({ children }) => {
   const [matchedUser, setMatchedUser] = useState([]);
   const [matchId, setMatchId] = useState("");
 
-  const removeMatchedUser = () => {
+  const removeMatchedUserWithCallback = (callback) => {
+    console.log("removeMatchedUser fired");
     setMatching(false);
     setIsMatched(false);
     setMatchedUser(null);
     setMatchId(null);
+    if (typeof callback === "function") {
+      callback();
+    }
   };
 
   return (
@@ -25,7 +30,7 @@ const MatchProvider = ({ children }) => {
         setMatchedUser,
         matchId,
         setMatchId,
-        removeMatchedUser,
+        removeMatchedUserWithCallback,
       }}
     >
       {children}

@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase";
+
 import { getBrowserVisibilityProp, getIsDocumentHidden } from "../utils";
 
 const usePageVisibility = () => {
@@ -44,4 +47,22 @@ const useEndMatch = (matchId, endMatch, removeMatchedUser) => {
   }, [matchId, endMatch, removeMatchedUser]);
 };
 
-export { usePageVisibility, useEndMatch };
+const useMatchChangeListener = (matchId, removeMatchedUser) => {
+  useEffect(() => {
+    if (!matchId) return;
+    console.log("match change listener fired");
+    const matchDocRef = doc(db, "matches", matchId);
+
+    const unsubscribe = onSnapshot(matchDocRef, (docSnapshot) => {
+      if (!docSnapshot.exists()) {
+        removeMatchedUser();
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [matchId, removeMatchedUser]);
+};
+
+export { usePageVisibility, useEndMatch, useMatchChangeListener };

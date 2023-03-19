@@ -11,7 +11,7 @@ const MatchButton = () => {
     useContext(MatchContext);
 
   useEffect(() => {
-    if (!isVisible) {
+    if (!isVisible && matching) {
       handleCancelButtonClick()
         .then(() => {
           setMatching(false);

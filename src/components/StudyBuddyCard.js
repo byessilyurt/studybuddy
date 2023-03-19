@@ -14,6 +14,7 @@ const StudyBuddyCard = () => {
           right study partners. With StudyBuddy, you can easily find study
           partners who have similar goals, schedules, and study habits.
           <span className="text-indigo-500 font-medium">
+            {" "}
             Click on the "Match" button to get started
           </span>
         </motion.p>

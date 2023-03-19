@@ -52,10 +52,12 @@ const signInWithGoogle = async () => {
   }
 };
 
-const logout = async () => {
+const logout = async (matchId) => {
   try {
-    await removeFromMatchingUsers();
+    await endMatch(matchId);
     sessionStorage.removeItem("Auth Token");
+    const event = new CustomEvent("userLoggedOut");
+    window.dispatchEvent(event);
     signOut(auth);
   } catch (err) {
     console.error(err);
@@ -75,9 +77,6 @@ const addToMatchingUsers = async () => {
     email: userInfo.email,
     timestamp: timestamp,
   });
-  // check if there is another user in the collection
-  // if not, mark this user as not_going_to_create_room
-  // if yes, mark this user as going_to_create_room
 };
 const matchUsers = async () => {
   return new Promise((resolve, reject) => {
