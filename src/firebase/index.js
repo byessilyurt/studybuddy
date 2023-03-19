@@ -11,6 +11,7 @@ import {
   addDoc,
   deleteDoc,
   onSnapshot,
+  runTransaction,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -78,39 +79,57 @@ const addToMatchingUsers = async () => {
   // if not, mark this user as not_going_to_create_room
   // if yes, mark this user as going_to_create_room
 };
-
 const matchUsers = async () => {
-  const unsubscribe = onSnapshot(
-    collection(db, "matching_users"),
-    (querySnapshot) => {
-      if (querySnapshot.size === 2) {
-        const doc1 = querySnapshot.docs[0];
-        const doc2 = querySnapshot.docs[1];
-        const user1 = doc1.data();
-        const user2 = doc2.data();
-        let matchedUser;
-        if (auth.currentUser.uid === user1.userID) {
-          matchedUser = user2;
-        } else {
-          matchedUser = user1;
-        }
-        addDoc(collection(db, "matches"), {
-          matchedUser: matchedUser,
-        })
-          .then(() => {
-            deleteDoc(doc(db, "matching_users", doc1.id));
-            deleteDoc(doc(db, "matching_users", doc2.id));
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onSnapshot(
+      collection(db, "matching_users"),
+      async (querySnapshot) => {
+        if (querySnapshot.size >= 2) {
+          const doc1 = querySnapshot.docs[0];
+          const doc2 = querySnapshot.docs[1];
+          const user1 = doc1.data();
+          const user2 = doc2.data();
+
+          // Sort user IDs to avoid duplicate match documents
+          const sortedUserIds = [user1.userID, user2.userID].sort();
+          const matchId = sortedUserIds.join("_");
+          console.log(matchId);
+
+          try {
+            await runTransaction(db, async (transaction) => {
+              const matchDocRef = doc(db, "matches", matchId);
+              const matchDocSnapshot = await transaction.get(matchDocRef);
+
+              // If the match document does not exist, create it
+              if (!matchDocSnapshot.exists()) {
+                transaction.set(matchDocRef, {
+                  user1,
+                  user2,
+                });
+
+                transaction.delete(doc(db, "matching_users", doc1.id));
+                transaction.delete(doc(db, "matching_users", doc2.id));
+              }
+            });
+
+            // Determine the authorized user and the matched user
+            const currentUserId = getUserIdAndEmail().userId;
+            const authorizedUser =
+              user1.userID === currentUserId ? user1 : user2;
+            const matchedUser = user1.userID === currentUserId ? user2 : user1;
+
             unsubscribe();
-            return matchedUser;
-          })
-          .catch((error) => {
-            console.error("Error adding matched user to database: ", error);
-          });
-      } else {
-        console.log("Waiting for users to match...");
+            resolve(matchedUser);
+          } catch (error) {
+            console.error("Error adding matched users to database: ", error);
+            reject(error);
+          }
+        } else {
+          console.log("Waiting for users to match...");
+        }
       }
-    }
-  );
+    );
+  });
 };
 
 const removeFromMatchingUsers = async () => {

@@ -4,7 +4,7 @@ const MatchContext = createContext();
 const MatchProvider = ({ children }) => {
   const [matching, setMatching] = useState(false);
   const [isMatched, setIsMatched] = useState(false);
-  const [matchedUsers, setMatchedUsers] = useState([]);
+  const [matchedUser, setMatchedUser] = useState([]);
   return (
     <MatchContext.Provider
       value={{
@@ -12,8 +12,8 @@ const MatchProvider = ({ children }) => {
         setMatching,
         isMatched,
         setIsMatched,
-        matchedUsers,
-        setMatchedUsers,
+        matchedUser,
+        setMatchedUser,
       }}
     >
       {children}

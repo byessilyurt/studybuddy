@@ -24,12 +24,12 @@ const MatchButton = () => {
 
   const handleMatchClick = async () => {
     setMatching(true);
-    // async needed?
-    const added = handleMatchButtonClick();
+    const added = await handleMatchButtonClick();
     if (added) {
       try {
         const matchedUser = await matchUsers();
-        console.log(matchedUser);
+        setIsMatched(true);
+        setMatchedUser(matchedUser);
       } catch (error) {
         console.log(error);
       }

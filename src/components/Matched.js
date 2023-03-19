@@ -3,10 +3,11 @@ import { motion } from "framer-motion";
 
 import { MatchContext } from "../context";
 
-const Matched = ({ matchData }) => {
+const Matched = () => {
   const { matchedUser } = useContext(MatchContext);
   const [time, setTime] = useState(0);
   useEffect(() => {
+    console.log(matchedUser);
     const interval = setInterval(() => {
       setTime((prevTime) => prevTime + 1);
     }, 1000);
@@ -27,9 +28,7 @@ const Matched = ({ matchData }) => {
       >
         {time} s
       </motion.div>
-      <p className="text-2xl mt-5">
-        You are matched with {toString(matchedUser)}
-      </p>
+      <p className="text-2xl mt-5">You are matched with {matchedUser.email}</p>
       <div className="mb-4">
         <h3 className="text-lg font-medium mb-2">Chat:</h3>
         <textarea
