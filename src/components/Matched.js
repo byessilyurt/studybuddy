@@ -6,7 +6,9 @@ import { MatchContext } from "../context";
 import {
   useAuthChangeListener,
   useEndMatch,
+  useHandleLogout,
   useMatchChangeListener,
+  useTimer,
 } from "../hooks";
 import { endMatch } from "../firebase";
 
@@ -15,36 +17,15 @@ const Matched = () => {
   const { matchedUser, matchId, removeMatchedUserWithCallback } =
     useContext(MatchContext);
   const [time, setTime] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime((prevTime) => prevTime + 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const handleUserLoggedOut = () => {
-      // User is logged out, end the match and navigate back to the home page
-      handleEndMatch();
-    };
-
-    window.addEventListener("userLoggedOut", handleUserLoggedOut);
-
-    return () => {
-      window.removeEventListener("userLoggedOut", handleUserLoggedOut);
-    };
-  }, []);
-
-  useEndMatch(matchId, endMatch, removeMatchedUserWithCallback);
-  useMatchChangeListener(matchId, removeMatchedUserWithCallback);
-
   const handleEndMatch = async () => {
     await endMatch(matchId);
     removeMatchedUserWithCallback(() => navigate("/"));
   };
+  useEndMatch(matchId, endMatch, removeMatchedUserWithCallback);
+  useMatchChangeListener(matchId, removeMatchedUserWithCallback);
+  useTimer(setTime);
+  useHandleLogout(handleEndMatch);
 
-  // If matchedUser is null, do not render the component
   if (!matchedUser) {
     return null;
   }
