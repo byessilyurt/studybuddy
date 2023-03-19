@@ -23,7 +23,6 @@ const MatchButton = () => {
   }, [isVisible]);
 
   const handleMatchClick = async () => {
-    // empty all matched users
     setMatchedUser(null);
     setMatchId(null);
     setIsMatched(false);
