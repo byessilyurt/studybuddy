@@ -39,15 +39,14 @@ const getIsDocumentHidden = () => {
 };
 
 const formatTime = (time) => {
-  const hours = Math.floor(time / 3600);
-  const minutes = Math.floor((time % 3600) / 60);
+  const minutes = Math.floor(time / 60);
   const seconds = time % 60;
 
-  return (
-    (hours ? `${hours}:` : "") +
-    (minutes ? `${String(minutes).padStart(2, "0")}:` : "00:") +
-    String(seconds).padStart(2, "0")
-  );
+  if (minutes > 0) {
+    return `${minutes}m ${seconds}s`;
+  } else {
+    return `${seconds}s`;
+  }
 };
 
 export {

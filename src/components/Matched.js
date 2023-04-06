@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { IoIosClose } from "react-icons/io";
 
 import { MatchContext } from "../context";
 import {
@@ -16,92 +17,107 @@ const Matched = () => {
   const navigate = useNavigate();
   const { matchedUser, matchId, removeMatchedUserWithCallback } =
     useContext(MatchContext);
-  const [time, setTime] = useState(0);
-  const [bgColor, setBgColor] = useState("rgba(128, 0, 128, 1)");
+  const [time, setTime] = useState(1500);
+  const [strokeColor, setStrokeColor] = useState("rgba(128, 0, 128, 0.2)");
 
   useEffect(() => {
-    const changeColor = () => {
-      const currentColor = bgColor.match(/\d+/g).map(Number);
-      const randomIndex = Math.floor(Math.random() * 3);
-      const randomStep =
-        (Math.random() * 0.1 - 0.05) * (Math.random() < 0.5 ? -1 : 1);
-
-      currentColor[randomIndex] = Math.min(
-        Math.max(currentColor[randomIndex] + randomStep, 0),
-        255
-      );
-
-      setBgColor(
-        `rgba(${currentColor[0]}, ${currentColor[1]}, ${currentColor[2]}, 1)`
-      );
-    };
-
     const timer = setInterval(() => {
-      changeColor();
+      if (time > 0) {
+        setTime(time - 1);
+      }
     }, 1000);
 
     return () => {
       clearInterval(timer);
     };
-  }, [bgColor]);
+  }, [time]);
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+
+    return `${minutes}m ${seconds}s`;
+  };
 
   const handleEndMatch = async () => {
     await endMatch(matchId);
     removeMatchedUserWithCallback(() => navigate("/"));
   };
 
+  const radius = 90;
+  const strokeWidth = 16;
+  const circleSize = radius * 2 + strokeWidth;
+  const circumference = 2 * Math.PI * radius;
+  const progress = time / 1500;
+
   useEndMatch(matchId, endMatch, removeMatchedUserWithCallback);
   useMatchChangeListener(matchId, removeMatchedUserWithCallback);
-  useTimer(setTime);
   useHandleLogout(handleEndMatch);
 
   if (!matchedUser) {
     return null;
   }
 
+  const firstName = matchedUser?.displayName?.split(" ")[0] || "Stranger";
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="flex flex-col items-center p-10"
+      className="flex flex-col items-center justify-center h-screen p-10"
     >
-      <div className="flex justify-between w-full items-start">
-        <div className="flex items-center">
-          <img
-            className="w-12 h-12 rounded-full"
-            src={matchedUser.photoURL || "https://via.placeholder.com/48"}
-            alt={matchedUser.displayName}
-          />
-          <span className="ml-2 text-2xl">{matchedUser.displayName}</span>
-        </div>
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0 }}
-          className={`rounded-full w-20 h-20 flex items-center justify-center text-white text-2xl`}
-          style={{ backgroundColor: bgColor }}
+      <svg
+        className="w-full max-w-xs"
+        width={circleSize}
+        height={circleSize}
+        viewBox={`0 0 ${circleSize} ${circleSize}`}
+      >
+        <circle
+          cx={circleSize / 2}
+          cy={circleSize / 2}
+          r={radius}
+          strokeWidth={strokeWidth}
+          fill="none"
+          stroke="rgba(128, 0, 128, 0.2)"
+        />
+        <circle
+          cx={circleSize / 2}
+          cy={circleSize / 2}
+          r={radius}
+          strokeWidth={strokeWidth}
+          fill="none"
+          stroke={strokeColor}
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference * (1 - progress)}
+          transform={`rotate(-90 ${circleSize / 2} ${circleSize / 2})`}
+        />
+        <text
+          x="50%"
+          y="50%"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill="purple-500"
+          fontSize="2rem"
+          fontWeight="bold"
         >
-          {time} s
-        </motion.div>
+          {formatTime(time)}
+        </text>
+      </svg>
+      <div className="mt-5 w-3/4 md:w-1/2 mx-auto">
+        <input
+          className="w-full p-1 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          type="text"
+          placeholder={`Say hi to ${firstName}`}
+        />
       </div>
-      <div className="mt-5 w-full">
-        <div className="bg-gray-200 p-2 rounded-lg mb-2">
-          {/* Message box */}
-        </div>
-        <div className="bg-white p-2 rounded-lg">
-          <input
-            className="w-full p-1 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            type="text"
-            placeholder="Type your message..."
-          />
-        </div>
-      </div>
+
       <button
-        className="bg-red-600 text-white px-6 py-2 mt-4 rounded-full focus:outline-none hover:bg-red-700 transition-colors"
+        className="absolute top-4 right-4 text-red-500 opacity-60 hover:opacity-100 transition-opacity focus:outline-none text-3xl"
         onClick={handleEndMatch}
       >
-        End Match
+        <IoIosClose />
       </button>
     </motion.div>
   );

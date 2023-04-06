@@ -57,7 +57,7 @@ const signInWithGoogle = async () => {
 const logout = async (matchId) => {
   try {
     await endMatch(matchId);
-    sessionStorage.removeItem("Auth Token");
+    localStorage.removeItem("User");
     const event = new CustomEvent("userLoggedOut");
     window.dispatchEvent(event);
     signOut(auth);
