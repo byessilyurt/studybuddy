@@ -1,24 +1,39 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { IoIosClose } from "react-icons/io";
+import { IoIosClose, IoMdTrash } from "react-icons/io";
 
 import { MatchContext } from "../context";
-import {
-  useAuthChangeListener,
-  useEndMatch,
-  useHandleLogout,
-  useMatchChangeListener,
-  useTimer,
-} from "../hooks";
-import { endMatch } from "../firebase";
+import { useEndMatch, useHandleLogout, useMatchChangeListener } from "../hooks";
+import { endMatch, getUserInfo, getMessages } from "../firebase";
+
+import ChatInput from "./ChatInput";
+import Timer from "./Timer";
+import ChatMessages from "./ChatMessages";
 
 const Matched = () => {
+  const radius = 90;
+  const strokeWidth = 16;
+  const circleSize = radius * 2 + strokeWidth;
+  const circumference = 2 * Math.PI * radius;
   const navigate = useNavigate();
-  const { matchedUser, matchId, removeMatchedUserWithCallback } =
-    useContext(MatchContext);
+  const user = getUserInfo();
+  const {
+    matchedUser,
+    matchId,
+    removeMatchedUserWithCallback,
+    messages,
+    setMessages,
+  } = useContext(MatchContext);
   const [time, setTime] = useState(1500);
+  const progress = time / 1500;
   const [strokeColor, setStrokeColor] = useState("rgba(128, 0, 128, 0.2)");
+  const [clearedTimestamp, setClearedTimestamp] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = getMessages(matchId, setMessages);
+    return () => unsubscribe();
+  }, [matchId]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -32,23 +47,15 @@ const Matched = () => {
     };
   }, [time]);
 
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-
-    return `${minutes}m ${seconds}s`;
-  };
-
   const handleEndMatch = async () => {
     await endMatch(matchId);
     removeMatchedUserWithCallback(() => navigate("/"));
   };
 
-  const radius = 90;
-  const strokeWidth = 16;
-  const circleSize = radius * 2 + strokeWidth;
-  const circumference = 2 * Math.PI * radius;
-  const progress = time / 1500;
+  const clearMessages = () => {
+    setMessages([]);
+    setClearedTimestamp(Date.now());
+  };
 
   useEndMatch(matchId, endMatch, removeMatchedUserWithCallback);
   useMatchChangeListener(matchId, removeMatchedUserWithCallback);
@@ -57,8 +64,6 @@ const Matched = () => {
   if (!matchedUser) {
     return null;
   }
-
-  const firstName = matchedUser?.displayName?.split(" ")[0] || "Stranger";
 
   return (
     <motion.div
@@ -102,17 +107,18 @@ const Matched = () => {
           fontSize="2rem"
           fontWeight="bold"
         >
-          {formatTime(time)}
+          <Timer initialTime={1500} onTimeEnd={handleEndMatch} />
         </text>
       </svg>
       <div className="mt-5 w-3/4 md:w-1/2 mx-auto">
-        <input
-          className="w-full p-1 focus:outline-none focus:ring-2 focus:ring-purple-500"
-          type="text"
-          placeholder={`Say hi to ${firstName}`}
-        />
+        <ChatInput matchId={matchId} />
       </div>
-
+      <ChatMessages
+        messages={messages}
+        clearedTimestamp={clearedTimestamp}
+        clearMessages={clearMessages}
+        user={user}
+      />
       <button
         className="absolute top-4 right-4 text-red-500 opacity-60 hover:opacity-100 transition-opacity focus:outline-none text-3xl"
         onClick={handleEndMatch}

@@ -35,10 +35,10 @@ const MatchButton = () => {
         setMatchedUser(matchedUser);
         setMatchId(matchId);
       } catch (error) {
-        console.log(error);
+        console.log("could not matched", error);
       }
     } else {
-      // error
+      console.log("could not added to matching_users ");
     }
   };
   const handleCancelClick = () => {

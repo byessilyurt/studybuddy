@@ -1,19 +1,19 @@
 import { createContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const MatchContext = createContext();
 const MatchProvider = ({ children }) => {
   const [matching, setMatching] = useState(false);
   const [isMatched, setIsMatched] = useState(false);
-  const [matchedUser, setMatchedUser] = useState([]);
+  const [matchedUser, setMatchedUser] = useState(null);
   const [matchId, setMatchId] = useState("");
+  const [messages, setMessages] = useState([]);
 
   const removeMatchedUserWithCallback = (callback) => {
-    console.log("removeMatchedUser fired");
     setMatching(false);
     setIsMatched(false);
     setMatchedUser(null);
     setMatchId(null);
+    setMessages([]);
     if (typeof callback === "function") {
       callback();
     }
@@ -31,6 +31,8 @@ const MatchProvider = ({ children }) => {
         matchId,
         setMatchId,
         removeMatchedUserWithCallback,
+        messages,
+        setMessages,
       }}
     >
       {children}

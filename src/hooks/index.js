@@ -36,12 +36,12 @@ const useEndMatch = (matchId, endMatch, removeMatchedUser) => {
       removeMatchedUser();
     };
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    //document.addEventListener("visibilitychange", handleVisibilityChange);
 
     window.addEventListener("beforeunload", handleEndMatch);
 
     return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      //document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("beforeunload", handleEndMatch);
     };
   }, [matchId, endMatch, removeMatchedUser]);

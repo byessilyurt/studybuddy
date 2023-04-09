@@ -42,11 +42,12 @@ const formatTime = (time) => {
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
 
-  if (minutes > 0) {
-    return `${minutes}m ${seconds}s`;
-  } else {
-    return `${seconds}s`;
-  }
+  return `${minutes}m ${seconds}s`;
+};
+
+const firstNameMatchedUser = (matchedUser) => {
+  const firstName = matchedUser?.displayName?.split(" ")[0] || "Stranger";
+  return firstName;
 };
 
 export {
@@ -56,4 +57,5 @@ export {
   getBrowserVisibilityProp,
   getBrowserDocumentHiddenProp,
   formatTime,
+  firstNameMatchedUser,
 };

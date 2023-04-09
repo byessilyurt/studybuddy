@@ -12,6 +12,7 @@ import {
   deleteDoc,
   onSnapshot,
   runTransaction,
+  orderBy,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -66,18 +67,20 @@ const logout = async (matchId) => {
   }
 };
 
-const getUserIdAndEmail = () => {
+const getUserInfo = () => {
   const user = auth.currentUser;
-  return { userId: user.uid, email: user.email };
+  return user;
 };
 
 const addToMatchingUsers = async () => {
-  const userInfo = getUserIdAndEmail();
+  const user = getUserInfo();
   const timestamp = Date.now();
   await addDoc(collection(db, "matching_users"), {
-    userID: userInfo.userId,
-    email: userInfo.email,
+    userID: user.uid,
+    email: user.email,
     timestamp: timestamp,
+    displayName: user.displayName,
+    photoURL: user.photoURL,
   });
 };
 const matchUsers = async () => {
@@ -90,35 +93,26 @@ const matchUsers = async () => {
           const doc2 = querySnapshot.docs[1];
           const user1 = doc1.data();
           const user2 = doc2.data();
-
           // Sort user IDs to avoid duplicate match documents
           const sortedUserIds = [user1.userID, user2.userID].sort();
           const matchId = sortedUserIds.join("_");
-          console.log(matchId);
-
           try {
             await runTransaction(db, async (transaction) => {
               const matchDocRef = doc(db, "matches", matchId);
               const matchDocSnapshot = await transaction.get(matchDocRef);
-
               // If the match document does not exist, create it
               if (!matchDocSnapshot.exists()) {
                 transaction.set(matchDocRef, {
                   user1,
                   user2,
                 });
-
                 transaction.delete(doc(db, "matching_users", doc1.id));
                 transaction.delete(doc(db, "matching_users", doc2.id));
               }
             });
-
             // Determine the authorized user and the matched user
-            const currentUserId = getUserIdAndEmail().userId;
-            const authorizedUser =
-              user1.userID === currentUserId ? user1 : user2;
+            const currentUserId = getUserInfo().uid;
             const matchedUser = user1.userID === currentUserId ? user2 : user1;
-
             unsubscribe();
             resolve({ matchId, matchedUser });
           } catch (error) {
@@ -136,20 +130,42 @@ const matchUsers = async () => {
 const endMatch = async (matchId) => {
   try {
     await deleteDoc(doc(db, "matches", matchId));
-    console.log("Match ended successfully");
   } catch (error) {
     console.error("Error ending match: ", error);
   }
 };
 
 const removeFromMatchingUsers = async () => {
-  const userInfo = getUserIdAndEmail();
+  const user = getUserInfo();
   const q = query(
     collection(db, "matching_users"),
-    where("userID", "==", userInfo.userId)
+    where("userID", "==", user.uid)
   );
   const docs = await getDocs(q);
   await deleteDoc(doc(db, "matching_users", docs.docs[0].id));
+};
+
+const addNewMessage = async (matchId, userId, message) => {
+  await addDoc(collection(db, "messages"), {
+    matchId,
+    userId,
+    text: message,
+    timestamp: Date.now(),
+  });
+};
+
+const getMessages = (matchId, setMessages) => {
+  const messagesQuery = query(
+    collection(db, "messages"),
+    where("matchId", "==", matchId),
+    orderBy("timestamp")
+  );
+
+  const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
+    setMessages(snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() })));
+  });
+
+  return unsubscribe;
 };
 
 export {
@@ -158,8 +174,11 @@ export {
   auth,
   app,
   db,
+  getUserInfo,
   addToMatchingUsers,
   removeFromMatchingUsers,
   matchUsers,
   endMatch,
+  addNewMessage,
+  getMessages,
 };
