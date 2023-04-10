@@ -46,7 +46,7 @@ const MatchButton = () => {
     setMatching(false);
   };
   return (
-    <div className="md:pl-64 flex justify-center items-start pt-8 h-screen">
+    <div className="flex justify-center items-start pt-8 h-screen">
       <div className="relative">
         <motion.button
           whileHover={{ scale: 1.1 }}

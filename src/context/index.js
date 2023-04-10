@@ -7,6 +7,7 @@ const MatchProvider = ({ children }) => {
   const [matchedUser, setMatchedUser] = useState(null);
   const [matchId, setMatchId] = useState("");
   const [messages, setMessages] = useState([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const removeMatchedUserWithCallback = (callback) => {
     setMatching(false);
@@ -33,6 +34,8 @@ const MatchProvider = ({ children }) => {
         removeMatchedUserWithCallback,
         messages,
         setMessages,
+        isSidebarOpen,
+        setIsSidebarOpen,
       }}
     >
       {children}

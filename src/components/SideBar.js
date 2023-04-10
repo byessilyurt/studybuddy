@@ -6,8 +6,7 @@ import { logout } from "../firebase";
 import { MatchContext } from "../context";
 
 const SideBar = () => {
-  const { matchId } = useContext(MatchContext);
-  const [isOpen, setIsOpen] = useState(false);
+  const { matchId, isSidebarOpen, setIsSidebarOpen } = useContext(MatchContext);
   const navigate = useNavigate();
   const sidebarRef = useRef();
 
@@ -23,12 +22,12 @@ const SideBar = () => {
 
   const handleClickOutside = (event) => {
     if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-      setIsOpen(false);
+      setIsSidebarOpen(false);
     }
   };
 
   useEffect(() => {
-    if (isOpen) {
+    if (isSidebarOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -37,25 +36,25 @@ const SideBar = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isSidebarOpen]);
 
   return (
     <>
       <button
-        className="md:hidden px-3 py-2 rounded-lg text-slate-500 text-3xl opacity-75"
-        onClick={() => setIsOpen(!isOpen)}
+        className="px-3 py-2 rounded-lg text-slate-500 text-3xl opacity-75"
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
         <IoIosMenu />
       </button>
       <div
         ref={sidebarRef}
         className={`z-40 absolute inset-y-0 left-0 w-64 transition-all duration-300 transform ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 rounded-lg shadow-xl p-4 bg-slate-100`}
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } rounded-lg shadow-xl p-4 bg-slate-100`}
       >
         <button
-          className="fixed z-50 right-2 md:invisible px-3 py-2 rounded-lg text-red-500 text-2xl hover:bg-gray-300"
-          onClick={() => setIsOpen(false)}
+          className="fixed z-50 right-2 px-3 py-2 rounded-lg text-red-500 text-2xl hover:bg-gray-300"
+          onClick={() => setIsSidebarOpen(false)}
         >
           <IoIosClose />
         </button>

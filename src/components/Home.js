@@ -10,9 +10,7 @@ import StudyBuddyCard from "./StudyBuddyCard";
 import Matched from "./Matched";
 
 function Home() {
-  const navigate = useNavigate();
-  const { isMatched } = useContext(MatchContext);
-  const authorisedUser = JSON.parse(localStorage.getItem("User"));
+  const { isMatched, isSidebarOpen } = useContext(MatchContext);
 
   useEffect(() => {
     showWarningNotification();
@@ -35,10 +33,10 @@ function Home() {
       {isMatched ? (
         <Matched />
       ) : (
-        <>
+        <div className={`${isSidebarOpen ? "md:pl-64" : null}`}>
           <StudyBuddyCard />
           <MatchButton />
-        </>
+        </div>
       )}
     </div>
   );

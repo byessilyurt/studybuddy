@@ -1,7 +1,11 @@
-import { IoMdTrash } from "react-icons/io";
+import { useContext } from "react";
+
+import { MatchContext } from "../context";
 import ChatMessage from "./ChatMessage";
 
-function ChatMessages({ messages, clearedTimestamp, clearMessages, user }) {
+function ChatMessages({ messages, clearedTimestamp, user }) {
+  const { isSidebarOpen } = useContext(MatchContext);
+
   const filteredMessages = messages
     .filter((message) => {
       if (!clearedTimestamp) return true;
@@ -14,8 +18,12 @@ function ChatMessages({ messages, clearedTimestamp, clearMessages, user }) {
   }
 
   return (
-    <div className="relative flex flex-col w-full h-64 md:h-96 md:pl-64 mt-4 mb-4">
-      <div className="pb-10 pr-4 flex-grow overflow-y-auto">
+    <div
+      className={`relative flex flex-col w-full h-64 md:h-96 ${
+        isSidebarOpen ? "md:pl-64" : "md:pl-auto"
+      }mt-4 mb-4`}
+    >
+      <div className="pb-10 pr-4 pl-4 md:pl-12 flex-grow overflow-y-auto">
         {filteredMessages.map((message) => (
           <ChatMessage
             key={message.id}
@@ -24,12 +32,6 @@ function ChatMessages({ messages, clearedTimestamp, clearMessages, user }) {
           />
         ))}
       </div>
-      <button
-        className="absolute -top-12 right-10 text-red-500 opacity-60 hover:opacity-100 transition-opacity focus:outline-none text-2xl"
-        onClick={clearMessages}
-      >
-        <IoMdTrash />
-      </button>
     </div>
   );
 }

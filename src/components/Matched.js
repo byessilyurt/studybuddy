@@ -72,46 +72,54 @@ const Matched = () => {
       exit={{ opacity: 0 }}
       className="flex flex-col items-center justify-center h-screen p-10"
     >
-      <svg
-        className="w-full max-w-xs"
-        width={circleSize}
-        height={circleSize}
-        viewBox={`0 0 ${circleSize} ${circleSize}`}
-      >
-        <circle
-          cx={circleSize / 2}
-          cy={circleSize / 2}
-          r={radius}
-          strokeWidth={strokeWidth}
-          fill="none"
-          stroke="rgba(128, 0, 128, 0.2)"
-        />
-        <circle
-          cx={circleSize / 2}
-          cy={circleSize / 2}
-          r={radius}
-          strokeWidth={strokeWidth}
-          fill="none"
-          stroke={strokeColor}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={circumference * (1 - progress)}
-          transform={`rotate(-90 ${circleSize / 2} ${circleSize / 2})`}
-        />
-        <text
-          x="50%"
-          y="50%"
-          textAnchor="middle"
-          dominantBaseline="middle"
-          fill="purple-500"
-          fontSize="2rem"
-          fontWeight="bold"
+      <div className="flex flex-col items-center justify-center w-full">
+        <svg
+          className="w-full max-w-xs"
+          width={circleSize}
+          height={circleSize}
+          viewBox={`0 0 ${circleSize} ${circleSize}`}
         >
-          <Timer initialTime={1500} onTimeEnd={handleEndMatch} />
-        </text>
-      </svg>
-      <div className="mt-5 w-3/4 md:w-1/2 mx-auto">
-        <ChatInput matchId={matchId} />
+          <circle
+            cx={circleSize / 2}
+            cy={circleSize / 2}
+            r={radius}
+            strokeWidth={strokeWidth}
+            fill="none"
+            stroke="rgba(128, 0, 128, 0.2)"
+          />
+          <circle
+            cx={circleSize / 2}
+            cy={circleSize / 2}
+            r={radius}
+            strokeWidth={strokeWidth}
+            fill="none"
+            stroke={strokeColor}
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={circumference * (1 - progress)}
+            transform={`rotate(-90 ${circleSize / 2} ${circleSize / 2})`}
+          />
+          <text
+            x="50%"
+            y="50%"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="purple-500"
+            fontSize="2rem"
+            fontWeight="bold"
+          >
+            <Timer initialTime={1500} onTimeEnd={handleEndMatch} />
+          </text>
+        </svg>
+        <div className="mt-5 w-full md:w-3/4 lg:w-3/4 ml-auto flex items-center px-4">
+          <ChatInput matchId={matchId} className="w-full" />
+          <button
+            className="ml-4 text-red-500 opacity-60 hover:opacity-100 transition-opacity focus:outline-none text-2xl"
+            onClick={clearMessages}
+          >
+            <IoMdTrash />
+          </button>
+        </div>
       </div>
       <ChatMessages
         messages={messages}

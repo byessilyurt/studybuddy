@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const StudyBuddyCard = () => {
   return (
-    <div className="md:pl-64 flex justify-center items-start my-12">
+    <div className="flex justify-center items-start my-12">
       <div className="w-full max-w-sm rounded-lg overflow-hidden bg-white shadow-md">
         <motion.p
           className="px-6 py-4 text-gray-700 leading-relaxed"
